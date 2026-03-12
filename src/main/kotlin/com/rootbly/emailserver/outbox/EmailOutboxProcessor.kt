@@ -6,6 +6,7 @@ import com.rootbly.emailserver.service.EmailClaimService
 import jakarta.mail.internet.MimeMessage
 import org.owasp.html.HtmlPolicyBuilder
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.scheduling.annotation.Scheduled
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component
 class EmailOutboxProcessor(
     private val emailClaimService: EmailClaimService,
     private val mailSender: JavaMailSender,
+    @Value("\${spring.mail.username}") private val mailUsername: String,
 ) {
     private val log = LoggerFactory.getLogger(this::class.java)
 
@@ -52,7 +54,7 @@ class EmailOutboxProcessor(
     private fun createMimeMessage(email: Email): MimeMessage {
         val message = mailSender.createMimeMessage()
         val helper = MimeMessageHelper(message, false, "UTF-8")
-        helper.setFrom(email.fromAddress)
+        helper.setFrom(mailUsername)
         helper.setTo(email.toAddress)
         helper.setSubject(email.subject)
         helper.setText(htmlPolicy.sanitize(email.body), true)

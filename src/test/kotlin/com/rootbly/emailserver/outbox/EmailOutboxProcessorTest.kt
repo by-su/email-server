@@ -13,7 +13,7 @@ class EmailOutboxProcessorTest {
 
     private val emailClaimService: EmailClaimService = mockk()
     private val mailSender: JavaMailSender = mockk()
-    private val processor = EmailOutboxProcessor(emailClaimService, mailSender)
+    private val processor = EmailOutboxProcessor(emailClaimService, mailSender, "sender@gmail.com")
 
     private val mimeMessage = mockk<MimeMessage>(relaxed = true)
 
@@ -26,7 +26,6 @@ class EmailOutboxProcessorTest {
 
     private fun email(id: Long = 1L) = Email(
         id = id,
-        fromAddress = "sender@gmail.com",
         toAddress = "receiver@example.com",
         subject = "제목",
         body = "<p>본문</p>",
