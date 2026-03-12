@@ -10,7 +10,6 @@ import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
-import java.time.LocalDateTime
 
 @Component
 class EmailOutboxProcessor(
@@ -35,10 +34,10 @@ class EmailOutboxProcessor(
     private fun processSingleEmail(email: Email) {
         try {
             mailSender.send(createMimeMessage(email))
-            emailClaimService.updateStatus(email, EmailStatus.SENT, LocalDateTime.now())
+            emailClaimService.markAsSent(email)
         } catch (e: Exception) {
             log.error("Failed id=${email.id}: ${e.message}")
-            emailClaimService.updateStatus(email, EmailStatus.FAILED, null)
+            emailClaimService.markAsFailed(email)
         }
     }
 

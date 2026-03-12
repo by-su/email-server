@@ -27,8 +27,8 @@ class Email(
     var status: EmailStatus = EmailStatus.PENDING,
 
     @CreationTimestamp
-    @Column(nullable = false)
-    val createdAt: LocalDateTime = LocalDateTime.now(),
+    @Column(nullable = false, updatable = false)
+    val createdAt: LocalDateTime = LocalDateTime.MIN,
 
     var sentAt: LocalDateTime? = null,
 )
