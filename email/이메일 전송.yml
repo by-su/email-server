@@ -1,0 +1,23 @@
+info:
+  name: 이메일 전송
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{url}}/emails"
+  body:
+    type: json
+    data: |-
+      {
+        "to": "dobby.indev@gmail.com",
+        "subject": "test",
+        "body": "this is test"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

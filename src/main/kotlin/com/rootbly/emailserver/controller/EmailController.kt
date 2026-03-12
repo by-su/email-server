@@ -2,6 +2,7 @@ package com.rootbly.emailserver.controller
 
 import com.rootbly.emailserver.dto.EmailResponse
 import com.rootbly.emailserver.dto.SendEmailRequest
+import com.rootbly.emailserver.dto.SubtitleReadyEmailRequest
 import com.rootbly.emailserver.service.EmailService
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
@@ -17,5 +18,10 @@ class EmailController(
     @PostMapping
     fun sendEmail(@RequestBody @Valid request: SendEmailRequest): EmailResponse =
         EmailResponse.from(emailService.send(request))
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/subtitle-ready")
+    fun sendSubtitleReady(@RequestBody @Valid request: SubtitleReadyEmailRequest): EmailResponse =
+        EmailResponse.from(emailService.sendSubtitleReady(request))
 
 }

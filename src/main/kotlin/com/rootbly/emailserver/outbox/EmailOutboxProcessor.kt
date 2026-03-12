@@ -19,9 +19,17 @@ class EmailOutboxProcessor(
     private val log = LoggerFactory.getLogger(this::class.java)
 
     private val htmlPolicy = HtmlPolicyBuilder()
-        .allowElements("p", "br", "b", "i", "u", "strong", "em", "ul", "ol", "li", "a")
+        .allowElements(
+            "p", "br", "b", "i", "u", "strong", "em", "ul", "ol", "li", "a",
+            "div", "span", "h1", "h2", "h3",
+            "table", "thead", "tbody", "tr", "th", "td",
+            "img",
+        )
         .allowUrlProtocols("https")
         .allowAttributes("href").onElements("a")
+        .allowAttributes("src", "alt", "width", "height").onElements("img")
+        .allowAttributes("width", "height", "cellpadding", "cellspacing", "border", "align", "valign", "bgcolor").onElements("table", "tr", "td", "th")
+        .allowStyling()
         .toFactory()
 
     // fixedDelay: 이전 실행이 끝난 후 5초 뒤에 다시 실행 (중복 처리 방지)
