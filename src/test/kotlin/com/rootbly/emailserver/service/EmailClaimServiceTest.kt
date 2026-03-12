@@ -23,7 +23,6 @@ class EmailClaimServiceTest {
 
     private fun email(id: Long = 1L) = Email(
         id = id,
-        fromAddress = "sender@gmail.com",
         toAddress = "receiver@example.com",
         subject = "제목",
         body = "<p>본문</p>",

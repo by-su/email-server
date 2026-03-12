@@ -11,9 +11,6 @@ class Email(
     val id: Long = 0,
 
     @Column(nullable = false)
-    val fromAddress: String,
-
-    @Column(nullable = false)
     val toAddress: String,
 
     @Column(nullable = false)

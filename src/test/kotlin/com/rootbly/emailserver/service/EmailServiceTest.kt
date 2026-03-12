@@ -14,7 +14,6 @@ class EmailServiceTest {
     private val service = EmailService(emailRepository)
 
     private val request = SendEmailRequest(
-        from = "sender@gmail.com",
         to = "receiver@example.com",
         subject = "테스트 제목",
         body = "<p>테스트 본문</p>",
