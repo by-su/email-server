@@ -13,6 +13,7 @@ object SubtitleReadyEmailTemplate {
         val videoId = extractVideoId(youtubeUrl)
         val thumbnailUrl = videoId?.let { "https://img.youtube.com/vi/$it/maxresdefault.jpg" }
         val safeMessage = message.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+        val safeUrl = youtubeUrl.replace("&", "&amp;").replace("\"", "&quot;")
 
         return """
 <!DOCTYPE html>
@@ -52,7 +53,7 @@ object SubtitleReadyEmailTemplate {
 
             ${if (thumbnailUrl != null) """
             <!-- Thumbnail -->
-            <a href="$youtubeUrl" style="display:block;margin-bottom:28px;text-decoration:none;border-radius:10px;overflow:hidden;border:1px solid #e8e8e4;">
+            <a href="$safeUrl" style="display:block;margin-bottom:28px;text-decoration:none;border-radius:10px;overflow:hidden;border:1px solid #e8e8e4;">
               <img src="$thumbnailUrl" alt="영상 썸네일" width="480" style="display:block;width:100%;height:auto;" />
             </a>
             """ else ""}
@@ -61,7 +62,7 @@ object SubtitleReadyEmailTemplate {
             <table cellpadding="0" cellspacing="0" border="0">
               <tr>
                 <td style="background-color:#FF0000;border-radius:8px;">
-                  <a href="$youtubeUrl" style="display:inline-block;padding:13px 24px;color:#ffffff;font-size:14px;font-weight:600;text-decoration:none;letter-spacing:-0.1px;">YouTube에서 보기</a>
+                  <a href="$safeUrl" style="display:inline-block;padding:13px 24px;color:#ffffff;font-size:14px;font-weight:600;text-decoration:none;letter-spacing:-0.1px;">YouTube에서 보기</a>
                 </td>
               </tr>
             </table>

@@ -22,7 +22,7 @@ class Email(
     @Column(nullable = false, columnDefinition = "TEXT")
     val body: String,
 
-    @Column(nullable = true)
+    @Column
     val platform: String? = null,
 
     @Enumerated(EnumType.STRING)

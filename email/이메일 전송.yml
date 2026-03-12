@@ -10,7 +10,6 @@ http:
     type: json
     data: |-
       {
-        "from": "tranyou.service@gmail.com",
         "to": "dobby.indev@gmail.com",
         "subject": "test",
         "body": "this is test"
