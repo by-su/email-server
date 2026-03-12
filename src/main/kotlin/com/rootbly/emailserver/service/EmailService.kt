@@ -18,8 +18,4 @@ class EmailService(
                 body = request.body,
             )
         )
-
-    fun findAll(): List<Email> = emailRepository.findAll()
-
-    fun findById(id: Long): Email? = emailRepository.findById(id).orElse(null)
 }

@@ -1,6 +1,7 @@
 package com.rootbly.emailserver.domain
 
 import jakarta.persistence.*
+import org.hibernate.annotations.CreationTimestamp
 import java.time.LocalDateTime
 
 @Entity
@@ -25,10 +26,11 @@ class Email(
     @Column(nullable = false)
     var status: EmailStatus = EmailStatus.PENDING,
 
+    @CreationTimestamp
     @Column(nullable = false)
     val createdAt: LocalDateTime = LocalDateTime.now(),
 
     var sentAt: LocalDateTime? = null,
 )
 
-enum class EmailStatus { PENDING, SENT, FAILED }
+enum class EmailStatus { PENDING, PROCESSING, SENT, FAILED }

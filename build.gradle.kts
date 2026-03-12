@@ -31,6 +31,9 @@ dependencies {
     // 이메일 발송
     implementation("org.springframework.boot:spring-boot-starter-mail")
 
+    // HTML Sanitization
+    implementation("com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20240325.1")
+
     // 요청 유효성 검사
     implementation("org.springframework.boot:spring-boot-starter-validation")
 
