@@ -1,8 +1,8 @@
 package com.rootbly.emailserver.outbox
 
 import com.rootbly.emailserver.domain.Email
-import com.rootbly.emailserver.domain.EmailRepository
 import com.rootbly.emailserver.domain.EmailStatus
+import com.rootbly.emailserver.service.EmailClaimService
 import io.mockk.*
 import jakarta.mail.internet.MimeMessage
 import org.junit.jupiter.api.BeforeEach
@@ -11,16 +11,17 @@ import org.springframework.mail.javamail.JavaMailSender
 
 class EmailOutboxProcessorTest {
 
-    private val emailRepository: EmailRepository = mockk()
+    private val emailClaimService: EmailClaimService = mockk()
     private val mailSender: JavaMailSender = mockk()
-    private val processor = EmailOutboxProcessor(emailRepository, mailSender)
+    private val processor = EmailOutboxProcessor(emailClaimService, mailSender)
 
     private val mimeMessage = mockk<MimeMessage>(relaxed = true)
 
     @BeforeEach
     fun setUp() {
         every { mailSender.createMimeMessage() } returns mimeMessage
-        every { emailRepository.save(any()) } answers { firstArg() }
+        every { emailClaimService.markAsSent(any()) } just Runs
+        every { emailClaimService.markAsFailed(any()) } just Runs
     }
 
     private fun email(id: Long = 1L) = Email(
@@ -32,44 +33,48 @@ class EmailOutboxProcessorTest {
     )
 
     @Test
-    fun `PENDING이 없으면 save를 호출하지 않는다`() {
-        every { emailRepository.findAllByStatus(EmailStatus.PENDING) } returns emptyList()
+    fun `PENDING이 없으면 발송하지 않는다`() {
+        every { emailClaimService.claimPendingEmails() } returns emptyList()
 
         processor.process()
 
-        verify(exactly = 0) { emailRepository.save(any()) }
+        verify(exactly = 0) { mailSender.send(any<MimeMessage>()) }
     }
 
     @Test
-    fun `발송 성공 시 SENT 상태로 저장된다`() {
-        every { emailRepository.findAllByStatus(EmailStatus.PENDING) } returns listOf(email())
+    fun `발송 성공 시 markAsSent를 호출한다`() {
+        val email = email()
+        every { emailClaimService.claimPendingEmails() } returns listOf(email)
         every { mailSender.send(any<MimeMessage>()) } just Runs
 
         processor.process()
 
-        verify { emailRepository.save(match { it.status == EmailStatus.SENT }) }
-        verify { emailRepository.save(match { it.sentAt != null }) }
+        verify { emailClaimService.markAsSent(email) }
+        verify(exactly = 0) { emailClaimService.markAsFailed(any()) }
     }
 
     @Test
-    fun `발송 실패 시 예외가 전파되지 않고 FAILED로 저장된다`() {
-        every { emailRepository.findAllByStatus(EmailStatus.PENDING) } returns listOf(email())
+    fun `발송 실패 시 예외가 전파되지 않고 markAsFailed를 호출한다`() {
+        val email = email()
+        every { emailClaimService.claimPendingEmails() } returns listOf(email)
         every { mailSender.send(any<MimeMessage>()) } throws RuntimeException("발송 실패")
 
         processor.process()
 
-        verify { emailRepository.save(match { it.status == EmailStatus.FAILED }) }
+        verify { emailClaimService.markAsFailed(email) }
+        verify(exactly = 0) { emailClaimService.markAsSent(any()) }
     }
 
     @Test
     fun `첫 번째 이메일 발송 실패 시 두 번째 이메일은 계속 처리된다`() {
-        every { emailRepository.findAllByStatus(EmailStatus.PENDING) } returns listOf(email(id=1L), email(id=2L))
+        val email1 = email(id = 1L)
+        val email2 = email(id = 2L)
+        every { emailClaimService.claimPendingEmails() } returns listOf(email1, email2)
         every { mailSender.send(any<MimeMessage>()) } throws RuntimeException("실패") andThenJust Runs
 
         processor.process()
 
-        verify { emailRepository.save(match { it.id == 1L && it.status == EmailStatus.FAILED }) }
-        verify { emailRepository.save(match { it.id == 2L && it.status == EmailStatus.SENT }) }
+        verify { emailClaimService.markAsFailed(email1) }
+        verify { emailClaimService.markAsSent(email2) }
     }
-
 }
