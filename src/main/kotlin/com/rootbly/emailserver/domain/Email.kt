@@ -22,6 +22,9 @@ class Email(
     @Column(nullable = false, columnDefinition = "TEXT")
     val body: String,
 
+    @Column(nullable = true)
+    val platform: String? = null,
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     var status: EmailStatus = EmailStatus.PENDING,

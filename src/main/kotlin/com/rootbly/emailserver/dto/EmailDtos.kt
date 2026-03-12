@@ -8,9 +8,6 @@ import java.time.LocalDateTime
 
 data class SendEmailRequest(
     @field:EmailValid @field:NotBlank
-    val from: String,
-
-    @field:EmailValid @field:NotBlank
     val to: String,
 
     @field:NotBlank
@@ -18,6 +15,21 @@ data class SendEmailRequest(
 
     @field:NotBlank
     val body: String,
+
+    val platform: String? = null,
+)
+
+data class SubtitleReadyEmailRequest(
+    @field:EmailValid @field:NotBlank
+    val to: String,
+
+    @field:NotBlank
+    val youtubeUrl: String,
+
+    @field:NotBlank
+    val message: String,
+
+    val platform: String? = null,
 )
 
 data class EmailResponse(
