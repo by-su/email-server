@@ -1,0 +1,24 @@
+info:
+  name: "자막 준비 이메일 "
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{url}}/emails/subtitle-ready"
+  body:
+    type: json
+    data: |-
+      {
+        "to": "dobby.indev@gmail.com",
+        "youtubeUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        "message": "요청하신 영상의 한국어 자막이 완성되었습니다.",
+        "platform": "rootblysub"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
